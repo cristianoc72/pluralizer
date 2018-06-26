@@ -25,8 +25,9 @@ script:
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
-allow_failures:
-  - php: hhvm
+matrix:
+  allow_failures:
+    - php: hhvm
 
 fast_finish: true
 
