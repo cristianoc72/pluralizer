@@ -1,0 +1,32 @@
+{
+    "name" : "propel/pluralizer",
+    "type" : "library",
+    "description" : "Pluralizer library",
+    "keywords" : [
+        "Pluralizer",
+        "Singular",
+        "Plural"
+    ],
+    "license" : "MIT",
+    "authors" : [{
+            "name" : "Cristiano Cinotti",
+            "email" : "cristianocinotti@gmail.com"
+        }
+    ],
+    "require" : {
+        "php" : ">=5.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.0|^7.0"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Propel\\Pluralizer\\" : "src/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Propel\\Pluralizer\\Tests\\" : "tests/"
+        }
+    }
+}
