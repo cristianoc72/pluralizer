@@ -71,4 +71,4 @@ When you submit a Pull Request, please follow this recommendations:
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.

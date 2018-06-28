@@ -125,32 +125,16 @@ class EnglishPluralizer implements PluralizerInterface
             throw new \InvalidArgumentException("The pluralizer expects a string.");
         }
 
-        // save some time in the case that singular and plural are the same
         if (in_array(strtolower($root), $this->uncountable)) {
             return $root;
         }
 
-        // check for irregular singular words
-        foreach ($this->irregular as $pattern => $result) {
-            $searchPattern = '/' . $pattern . '$/i';
-            if (preg_match($searchPattern, $root)) {
-                $replacement = preg_replace($searchPattern, $result, $root);
-                // look at the first char and see if it's upper case
-                // I know it won't handle more than one upper case char here (but I'm OK with that)
-                if (preg_match('/^[A-Z]/', $root)) {
-                    $replacement = ucfirst($replacement);
-                }
-
-                return $replacement;
-            }
+        if (null !== $replacement = $this->checkIrregularForm($root, $this->irregular)) {
+            return $replacement;
         }
 
-        // check for irregular singular suffixes
-        foreach ($this->plural as $pattern => $result) {
-            $searchPattern = '/' . $pattern . '$/i';
-            if (preg_match($searchPattern, $root)) {
-                return preg_replace($searchPattern, $result, $root);
-            }
+        if (null !== $replacement = $this->checkIrregularSuffix($root, $this->plural)) {
+            return $replacement;
         }
 
         // fallback to naive pluralization
@@ -163,13 +147,33 @@ class EnglishPluralizer implements PluralizerInterface
             throw new \InvalidArgumentException("The pluralizer expects a string.");
         }
 
-        // save some time in the case that singular and plural are the same
         if (in_array(strtolower($root), $this->uncountable)) {
             return $root;
         }
 
-        // check for irregular plural words
-        foreach ($this->irregular as $result => $pattern) {
+        if (null !== $replacement = $this->checkIrregularForm($root, array_flip($this->irregular))) {
+            return $replacement;
+        }
+
+        if (null !== $replacement = $this->checkIrregularSuffix($root, $this->getSingularArray())) {
+            return $replacement;
+        }
+
+        // fallback to naive singularization
+        return substr($root, 0, -1);
+    }
+
+    /**
+     * Pluralize/Singularize irregular forms.
+     *
+     * @param string $root The string to pluralize/singularize
+     * @param array $irregular Array of irregular forms
+     *
+     * @return null|string
+     */
+    private function checkIrregularForm($root, $irregular)
+    {
+        foreach ($irregular as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
             if (preg_match($searchPattern, $root)) {
                 $replacement = preg_replace($searchPattern, $result, $root);
@@ -183,6 +187,34 @@ class EnglishPluralizer implements PluralizerInterface
             }
         }
 
+        return null;
+    }
+
+    /**
+     * @param string $root
+     * @param array $irregular Array of irregular suffixes
+     *
+     * @return null|string
+     */
+    private function checkIrregularSuffix($root, $irregular)
+    {
+        foreach ($irregular as $pattern => $result) {
+            $searchPattern = '/' . $pattern . '$/i';
+            if (preg_match($searchPattern, $root)) {
+                return preg_replace($searchPattern, $result, $root);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Flip the array of plural suffixes, to use it for singularize.
+     *
+     * @return array
+     */
+    private function getSingularArray()
+    {
         $singular = array_flip($this->plural);
         $singular = array_slice($singular, 3);
 
@@ -198,15 +230,6 @@ class EnglishPluralizer implements PluralizerInterface
         // should be added to the $irregular array.
         $singular['xes'] = 'x';
 
-        // check for irregular plural suffixes
-        foreach ($singular as $pattern => $result) {
-            $searchPattern = '/' . $pattern . '$/i';
-            if (preg_match($searchPattern, $root)) {
-                return preg_replace($searchPattern, $result, $root);
-            }
-        }
-
-        // fallback to naive singularization
-        return substr($root, 0, -1);
+        return $singular;
     }
 }
