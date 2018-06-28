@@ -141,6 +141,13 @@ class EnglishPluralizer implements PluralizerInterface
         return $root . 's';
     }
 
+    /**
+     * Generate a singular name based on the passed in root.
+     *
+     * @param  string $root The root that needs to be pluralized (e.g. Author)
+     * @return string The singular form of $root (e.g. Authors).
+     * @throws \InvalidArgumentException If the parameter is not a string.
+     */
     public function getSingularForm($root)
     {
         if (!is_string($root)) {
@@ -175,8 +182,7 @@ class EnglishPluralizer implements PluralizerInterface
     {
         foreach ($irregular as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
-            if (preg_match($searchPattern, $root)) {
-                $replacement = preg_replace($searchPattern, $result, $root);
+            if ($root !== $replacement = preg_replace($searchPattern, $result, $root)) {
                 // look at the first char and see if it's upper case
                 // I know it won't handle more than one upper case char here (but I'm OK with that)
                 if (preg_match('/^[A-Z]/', $root)) {
@@ -200,8 +206,8 @@ class EnglishPluralizer implements PluralizerInterface
     {
         foreach ($irregular as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
-            if (preg_match($searchPattern, $root)) {
-                return preg_replace($searchPattern, $result, $root);
+            if ($root !== $replacement = preg_replace($searchPattern, $result, $root)) {
+                return $replacement;
             }
         }
 
