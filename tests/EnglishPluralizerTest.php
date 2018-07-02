@@ -24,7 +24,6 @@ class EnglishPluralizerTest extends TestCase
         return [
             ['', 's'],
             ['user', 'users'],
-            ['users', 'userss'],
             ['User', 'Users'],
             ['sheep', 'sheep'],
             ['Sheep', 'Sheep'],
@@ -141,5 +140,43 @@ class EnglishPluralizerTest extends TestCase
     {
         $pluralizer = new EnglishPluralizer();
         $pluralizer->getSingularForm($wrong);
+    }
+
+    public function testSingularizeSingularForm()
+    {
+        $pluralizer = new EnglishPluralizer();
+        $this->assertEquals('book', $pluralizer->getSingularForm('book'), '`book` is already singular.');
+        $this->assertEquals('Book', $pluralizer->getSingularForm('Book'), '`Book` is already singular.');
+        $this->assertEquals('foot', $pluralizer->getSingularForm('foot'), '`foot` is already singular.');
+        $this->assertEquals('people', $pluralizer->getSingularForm('people'), '`peolple` is uncountable, so it cannot be singularized.');
+        $this->assertEquals('food_menu', $pluralizer->getSingularForm('food_menu'), '`food_menu` is already singular.');
+    }
+
+    public function testPluralizePluralForm()
+    {
+        $pluralizer = new EnglishPluralizer();
+        $this->assertEquals('books', $pluralizer->getPluralForm('books'), '`books` is already plural.');
+        $this->assertEquals('Books', $pluralizer->getPluralForm('Books'), '`Books` is already plural.');
+        $this->assertEquals('feet', $pluralizer->getPluralForm('feet'), '`feet` is already plural.');
+        $this->assertEquals('people', $pluralizer->getPluralForm('people'), '`peolple` is uncountable, so it cannot be pluralized.');
+        $this->assertEquals('food_menus', $pluralizer->getPluralForm('food_menus'), '`food_menus` is already plural.');
+    }
+
+    /**
+     * @dataProvider getPluralFormDataProvider
+     */
+    public function testIsPlural($singular, $plural)
+    {
+        $pluralizer = new EnglishPluralizer();
+        $this->assertTrue($pluralizer->isPlural($plural));
+    }
+
+    /**
+     * @dataProvider getPluralFormDataProvider
+     */
+    public function testIsSingular($singular, $plural)
+    {
+        $pluralizer = new EnglishPluralizer();
+        $this->assertTrue($pluralizer->isSingular($singular));
     }
 }

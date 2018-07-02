@@ -112,6 +112,40 @@ class EnglishPluralizer implements PluralizerInterface
         'people',
     ];
 
+    /** @var array */
+    protected $singular;
+
+    /**
+     * Array of words that could be ambiguously interpreted. Eg:
+     * `isPlural` method can't recognize 'menus' as plural, because it considers 'menus' as the
+     * singular of 'menuses'.
+     *
+     * @var array
+     */
+    protected $ambiguous = [
+        'menu' => 'menus'
+    ];
+
+
+    public function __construct()
+    {
+        // Create the $singular array
+        $this->singular = array_flip($this->plural);
+        $this->singular = array_slice($this->singular, 3);
+
+        $reg = [
+            '(ind|vert)ices' => '\1ex',
+            '(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)i' => '\1us',
+            '(buffal|tomat)oes' => '\1o'
+        ];
+
+        $this->singular = array_merge($reg, $this->singular);
+
+        // We have an ambiguity: -xes is the plural form of -x or -xis. By now, we choose -x. Words with -xis suffix
+        // should be added to the $irregular array.
+        $this->singular['xes'] = 'x';
+    }
+
     /**
      * Generate a plural name based on the passed in root.
      *
@@ -129,12 +163,21 @@ class EnglishPluralizer implements PluralizerInterface
             return $root;
         }
 
+        // This check must be run before `checkIrregularForm` call
+        if ($this->isAmbiguousPlural($root)) {
+            return $root;
+        }
+
         if (null !== $replacement = $this->checkIrregularForm($root, $this->irregular)) {
             return $replacement;
         }
 
         if (null !== $replacement = $this->checkIrregularSuffix($root, $this->plural)) {
             return $replacement;
+        }
+
+        if ($this->isPlural($root)) {
+            return $root;
         }
 
         // fallback to naive pluralization
@@ -162,12 +205,92 @@ class EnglishPluralizer implements PluralizerInterface
             return $replacement;
         }
 
-        if (null !== $replacement = $this->checkIrregularSuffix($root, $this->getSingularArray())) {
+        if (null !== $replacement = $this->checkIrregularSuffix($root, $this->singular)) {
             return $replacement;
+        }
+
+        if ($this->isSingular($root)) {
+            return $root;
         }
 
         // fallback to naive singularization
         return substr($root, 0, -1);
+    }
+
+    /**
+     * Check if $root word is plural.
+     *
+     * @param string $root
+     *
+     * @return bool
+     */
+    public function isPlural($root)
+    {
+        if ('' === $root) {
+            return false;
+        }
+
+        if (in_array(strtolower($root), $this->uncountable)) {
+            return true;
+        }
+
+        foreach ($this->irregular as $pattern) {
+            if (preg_match('/' . $pattern . '$/i', $root)) {
+                return true;
+            }
+        }
+
+        foreach ($this->singular as $pattern => $result) {
+            if (preg_match('/' . $pattern . '$/i', $root)) {
+                return true;
+            }
+        }
+
+        if ('s' == $root[strlen($root) - 1]) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if $root word is singular.
+     *
+     * @param $root
+     *
+     * @return bool
+     */
+    public function isSingular($root)
+    {
+        if ('' === $root) {
+            return true;
+        }
+
+        if (in_array(strtolower($root), $this->uncountable)) {
+            return true;
+        }
+
+        if ($this->isAmbiguousPlural($root)) {
+            return false;
+        }
+
+        foreach ($this->irregular as $pattern => $result) {
+            if (preg_match('/' . $pattern . '$/i', $root)) {
+                return true;
+            }
+        }
+
+        foreach ($this->plural as $pattern => $result) {
+            if (preg_match('/' . $pattern . '$/i', $root)) {
+                return true;
+            }
+        }
+
+        if ('s' !== $root[strlen($root) - 1]) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -215,27 +338,16 @@ class EnglishPluralizer implements PluralizerInterface
     }
 
     /**
-     * Flip the array of plural suffixes, to use it for singularize.
+     * @param $root
      *
-     * @return array
+     * @return bool
      */
-    private function getSingularArray()
+    private function isAmbiguousPlural($root)
     {
-        $singular = array_flip($this->plural);
-        $singular = array_slice($singular, 3);
-
-        $reg = [
-            '(ind|vert)ices' => '\1ex',
-            '(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)i' => '\1us',
-            '(buffal|tomat)oes' => '\1o'
-        ];
-
-        $singular = array_merge($reg, $singular);
-
-        // We have an ambiguity: -xes is the plural form of -x or -xis. By now, we choose -x. Words with -xis suffix
-        // should be added to the $irregular array.
-        $singular['xes'] = 'x';
-
-        return $singular;
+        foreach ($this->ambiguous as $pattern) {
+            if (preg_match('/' . $pattern . '$/i', $root)) {
+                return true;
+            }
+        }
     }
 }
