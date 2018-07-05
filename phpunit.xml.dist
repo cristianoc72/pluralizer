@@ -16,13 +16,13 @@
     </testsuites>
 
     <filter>
-    	<whitelist processUncoveredFilesFromWhitelist="true">
-    		<directory suffix=".php">src/</directory>
-    	</whitelist>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+        <directory suffix=".php">src/</directory>
+    </whitelist>
     </filter>
     
     <logging>
-		<log type="coverage-html" target="coverage"/>
-	</logging>
+        <log type="coverage-html" target="coverage"/>
+    </logging>
     
 </phpunit>

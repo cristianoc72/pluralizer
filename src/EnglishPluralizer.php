@@ -142,7 +142,7 @@ class EnglishPluralizer implements PluralizerInterface
         $this->singular = array_merge($reg, $this->singular);
 
         // We have an ambiguity: -xes is the plural form of -x or -xis. By now, we choose -x. Words with -xis suffix
-        // should be added to the $irregular array.
+        // should be added to the $ambiguous array.
         $this->singular['xes'] = 'x';
     }
 
@@ -155,33 +155,27 @@ class EnglishPluralizer implements PluralizerInterface
      */
     public function getPluralForm($root)
     {
+        $pluralForm = $root;
+
         if (!is_string($root)) {
             throw new \InvalidArgumentException("The pluralizer expects a string.");
         }
 
-        if (in_array(strtolower($root), $this->uncountable)) {
-            return $root;
+        if (!in_array(strtolower($root), $this->uncountable)) {
+            // This check must be run before `checkIrregularForm` call
+            if (!$this->isAmbiguousPlural($root)) {
+                if (null !== $replacement = $this->checkIrregularForm($root, $this->irregular)) {
+                    $pluralForm = $replacement;
+                } elseif (null !== $replacement = $this->checkIrregularSuffix($root, $this->plural)) {
+                    $pluralForm = $replacement;
+                } elseif (!$this->isPlural($root)) {
+                    // fallback to naive pluralization
+                    $pluralForm = $root . 's';
+                }
+            }
         }
 
-        // This check must be run before `checkIrregularForm` call
-        if ($this->isAmbiguousPlural($root)) {
-            return $root;
-        }
-
-        if (null !== $replacement = $this->checkIrregularForm($root, $this->irregular)) {
-            return $replacement;
-        }
-
-        if (null !== $replacement = $this->checkIrregularSuffix($root, $this->plural)) {
-            return $replacement;
-        }
-
-        if ($this->isPlural($root)) {
-            return $root;
-        }
-
-        // fallback to naive pluralization
-        return $root . 's';
+        return $pluralForm;
     }
 
     /**
@@ -193,28 +187,24 @@ class EnglishPluralizer implements PluralizerInterface
      */
     public function getSingularForm($root)
     {
+        $singularForm = $root;
+
         if (!is_string($root)) {
             throw new \InvalidArgumentException("The pluralizer expects a string.");
         }
 
-        if (in_array(strtolower($root), $this->uncountable)) {
-            return $root;
+        if (!in_array(strtolower($root), $this->uncountable)) {
+            if (null !== $replacement = $this->checkIrregularForm($root, array_flip($this->irregular))) {
+                $singularForm = $replacement;
+            } elseif (null !== $replacement = $this->checkIrregularSuffix($root, $this->singular)) {
+                $singularForm = $replacement;
+            } elseif (!$this->isSingular($root)) {
+                // fallback to naive singularization
+                return substr($root, 0, -1);
+            }
         }
 
-        if (null !== $replacement = $this->checkIrregularForm($root, array_flip($this->irregular))) {
-            return $replacement;
-        }
-
-        if (null !== $replacement = $this->checkIrregularSuffix($root, $this->singular)) {
-            return $replacement;
-        }
-
-        if ($this->isSingular($root)) {
-            return $root;
-        }
-
-        // fallback to naive singularization
-        return substr($root, 0, -1);
+        return $singularForm;
     }
 
     /**
@@ -226,31 +216,25 @@ class EnglishPluralizer implements PluralizerInterface
      */
     public function isPlural($root)
     {
-        if ('' === $root) {
-            return false;
-        }
+        $out = false;
 
-        if (in_array(strtolower($root), $this->uncountable)) {
-            return true;
-        }
+        if ('' !== $root) {
+            if (in_array(strtolower($root), $this->uncountable)) {
+                $out = true;
+            } else {
+                $out = $this->isIrregular($this->irregular, $root);
 
-        foreach ($this->irregular as $pattern) {
-            if (preg_match('/' . $pattern . '$/i', $root)) {
-                return true;
+                if (!$out) {
+                    $out = $this->isIrregular(array_keys($this->singular), $root);
+                }
+
+                if (!$out && 's' == $root[strlen($root) - 1]) {
+                    $out = true;
+                }
             }
         }
 
-        foreach ($this->singular as $pattern => $result) {
-            if (preg_match('/' . $pattern . '$/i', $root)) {
-                return true;
-            }
-        }
-
-        if ('s' == $root[strlen($root) - 1]) {
-            return true;
-        }
-
-        return false;
+        return $out;
     }
 
     /**
@@ -262,35 +246,25 @@ class EnglishPluralizer implements PluralizerInterface
      */
     public function isSingular($root)
     {
+        $out = false;
+
         if ('' === $root) {
-            return true;
-        }
+            $out = true;
+        } elseif (in_array(strtolower($root), $this->uncountable)) {
+            $out = true;
+        } elseif (!$this->isAmbiguousPlural($root)) {
+            $out = $this->isIrregular($this->irregular, $root);
 
-        if (in_array(strtolower($root), $this->uncountable)) {
-            return true;
-        }
+            if (!$out) {
+                $out = $this->isIrregular(array_keys($this->plural), $root);
+            }
 
-        if ($this->isAmbiguousPlural($root)) {
-            return false;
-        }
-
-        foreach ($this->irregular as $pattern => $result) {
-            if (preg_match('/' . $pattern . '$/i', $root)) {
-                return true;
+            if (!$out && 's' !== $root[strlen($root) - 1]) {
+                $out = true;
             }
         }
 
-        foreach ($this->plural as $pattern => $result) {
-            if (preg_match('/' . $pattern . '$/i', $root)) {
-                return true;
-            }
-        }
-
-        if ('s' !== $root[strlen($root) - 1]) {
-            return true;
-        }
-
-        return false;
+        return $out;
     }
 
     /**
@@ -349,5 +323,24 @@ class EnglishPluralizer implements PluralizerInterface
                 return true;
             }
         }
+
+        return false;
+    }
+
+    /**
+     * @param array $irregular
+     * @param $root
+     *
+     * @return bool
+     */
+    private function isIrregular($irregular, $root)
+    {
+        foreach ($irregular as $pattern) {
+            if (preg_match('/' . $pattern . '$/i', $root)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
