@@ -46,7 +46,7 @@ $pluralizer = new cristianoc72\Pluralizer();
 
 var_dump($pluralizer->isPlural('Author'); // (bool) false
 
-$singular = $pluralizer->isPlural('Books');  // (bool) true
+var_dump($pluralizer->isPlural('Books'));  // (bool) true
 ```
 
 ## Testing
@@ -65,13 +65,18 @@ We accept contributions via Pull Requests on [Github](https://github.com/cristia
 
 When you submit a Pull Request, please follow this recommendations:
 
-- **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)** - Check the code style and fix it via [Php CS Fixer](https://cs.sensiolabs.org/)
+- [PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) - Check the code style and fix it via [Php CS Fixer](https://cs.sensiolabs.org/)
 
-- **Add tests!** - Your patch won't be accepted if it doesn't have tests.
+- Add tests! - Your patch won't be accepted if it doesn't have tests.
 
-- **Document any change in behaviour** - Make sure the `README.md` is kept up-to-date.
+- Document any change in behaviour - Make sure the `README.md` is kept up-to-date.
 
-- **Send coherent history** - Make sure each individual commit in your pull request is meaningful. If you had to make multiple intermediate commits while developing, please [squash them](http://www.git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Changing-Multiple-Commit-Messages) before submitting.
+- Send coherent history - Make sure each individual commit in your pull request is meaningful. If you had to make multiple intermediate commits while developing, please [squash them](http://www.git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Changing-Multiple-Commit-Messages) before submitting.
+
+## Versions ##
+
+- **0.x**: Developmnet versions. v0.5 can be considered stable. PHP 5.6 support.
+- **1.x**: Stable versions. PHP >= 7.1
 
 ## Credits
 
