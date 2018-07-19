@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Pluralizer;
+namespace cristianoc72\Pluralizer;
 
 /**
  * Standard replacement English pluralizer class. Based on the links below

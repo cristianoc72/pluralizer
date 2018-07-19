@@ -1,7 +1,7 @@
 {
-    "name" : "propel/pluralizer",
+    "name" : "cristianoc72/pluralizer",
     "type" : "library",
-    "description" : "Pluralizer library",
+    "description" : "Pluralize library",
     "keywords" : [
         "Pluralizer",
         "Singular",
@@ -21,12 +21,12 @@
     },
     "autoload" : {
         "psr-4" : {
-            "Propel\\Pluralizer\\" : "src/"
+            "cristianoc72\\Pluralizer\\" : "src/"
         }
     },
     "autoload-dev" : {
         "psr-4" : {
-            "Propel\\Pluralizer\\Tests\\" : "tests/"
+            "cristianoc72\\Pluralizer\\Tests\\" : "tests/"
         }
     }
 }

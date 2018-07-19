@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.com/cristianoc72/pluralizer.svg?branch=master)](https://travis-ci.com/cristianoc72/pluralizer)
 [![Maintainability](https://api.codeclimate.com/v1/badges/d68768bff27eca05e258/maintainability)](https://codeclimate.com/github/cristianoc72/pluralizer/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/d68768bff27eca05e258/test_coverage)](https://codeclimate.com/github/cristianoc72/pluralizer/test_coverage)
-[![StyleCI](https://github.styleci.io/repos/138690420/shield?branch=master)](https://github.styleci.io/repos/138690420)
+[![StyleCI](https://github.styleci.io/repos/141529674/shield?branch=master)](https://github.styleci.io/repos/141529674)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 Pluralizer is a pluralize/singularize library, extracted from [Propel Orm](https://github.com/propelorm/Propel3) codebase.
@@ -12,7 +12,7 @@ Pluralizer is a pluralize/singularize library, extracted from [Propel Orm](https
 Via Composer
 
 ``` bash
-$ composer require propel/pluralizer
+$ composer require cristianoc72/pluralizer
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ The library exposes two methods: `getPluralForm`, which transforms a word from s
 doing the opposite.
 
 ``` php
-$pluralizer = new Propel\Pluralizer();
+$pluralizer = new cristianoc72\Pluralizer();
 
 $plural = $pluralizer->getPluralForm('Author');
 echo $plural; // Authors
@@ -33,10 +33,20 @@ echo $singular; // Book
 The library can transform the most common irregular words:
 
 ``` php
-$pluralizer = new Propel\Pluralizer();
+$pluralizer = new cristianoc72\Pluralizer();
 
 $plural = $pluralizer->getPluralForm('tooth');
 echo $plural; // teeth
+```
+
+Besides, the library exposes two checker method `isPlural` and `isSingular`:
+
+```php
+$pluralizer = new cristianoc72\Pluralizer();
+
+var_dump($pluralizer->isPlural('Author'); // (bool) false
+
+$singular = $pluralizer->isPlural('Books');  // (bool) true
 ```
 
 ## Testing

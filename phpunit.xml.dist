@@ -10,7 +10,7 @@
          stopOnFailure="false"
 >
     <testsuites>
-        <testsuite name="Propel Pluralizer Test Suite">
+        <testsuite name="cristianoc72 Pluralizer Test Suite">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>

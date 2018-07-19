@@ -8,7 +8,7 @@
  * @license MIT License
  */
 
-namespace Propel\Pluralizer;
+namespace cristianoc72\Pluralizer;
 
 /**
  * The generic interface to create a plural form of a name.

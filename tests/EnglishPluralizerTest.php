@@ -8,10 +8,10 @@
  * @license MIT License
  */
 
-namespace Propel\Pluralizer\Tests;
+namespace cristianoc72\Pluralizer\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Propel\Pluralizer\EnglishPluralizer;
+use cristianoc72\Pluralizer\EnglishPluralizer;
 
 /**
  * Tests for the StandardEnglishPluralizer class
