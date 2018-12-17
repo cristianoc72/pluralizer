@@ -8,6 +8,8 @@
  * @license MIT License
  */
 
+declare(strict_types=1);
+
 namespace cristianoc72\Pluralizer;
 
 /**
@@ -24,7 +26,7 @@ interface PluralizerInterface
      * @param  string $root The root that needs to be pluralized (e.g. Author)
      * @return string The plural form of $root.
      */
-    public function getPluralForm($root);
+    public function getPluralForm(string $root): string;
 
     /**
      * Generate a singular name based on the passed in root.
@@ -32,5 +34,5 @@ interface PluralizerInterface
      * @param  string $root The root that needs to be singularized (e.g. Authors)
      * @return string The singular form of $root.
      */
-    public function getSingularForm($root);
+    public function getSingularForm(string $root): string;
 }

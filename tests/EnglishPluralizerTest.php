@@ -8,6 +8,8 @@
  * @license MIT License
  */
 
+declare(strict_types=1);
+
 namespace cristianoc72\Pluralizer\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -115,7 +117,7 @@ class EnglishPluralizerTest extends TestCase
 
     /**
      * @dataProvider providerForWrongType
-     * @expectedException \InvalidArgumentException
+     * @expectedException \TypeError
      */
     public function testWrongTypeToPluralizeThrowsException($wrong)
     {
@@ -134,7 +136,7 @@ class EnglishPluralizerTest extends TestCase
 
     /**
      * @dataProvider providerForWrongType
-     * @expectedException \InvalidArgumentException
+     * @expectedException \TypeError
      */
     public function testWrongTypeToSingularizeThrowsException($wrong)
     {

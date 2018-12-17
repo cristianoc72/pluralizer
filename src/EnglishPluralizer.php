@@ -8,6 +8,8 @@
  * @license MIT License
  */
 
+declare(strict_types=1);
+
 namespace cristianoc72\Pluralizer;
 
 /**
@@ -150,16 +152,12 @@ class EnglishPluralizer implements PluralizerInterface
      * Generate a plural name based on the passed in root.
      *
      * @param  string $root The root that needs to be pluralized (e.g. Author)
+     *
      * @return string The plural form of $root (e.g. Authors).
-     * @throws \InvalidArgumentException If the parameter is not a string.
      */
-    public function getPluralForm($root)
+    public function getPluralForm(string $root): string
     {
         $pluralForm = $root;
-
-        if (!is_string($root)) {
-            throw new \InvalidArgumentException("The pluralizer expects a string.");
-        }
 
         if (!in_array(strtolower($root), $this->uncountable)) {
             // This check must be run before `checkIrregularForm` call
@@ -183,15 +181,10 @@ class EnglishPluralizer implements PluralizerInterface
      *
      * @param  string $root The root that needs to be pluralized (e.g. Author)
      * @return string The singular form of $root (e.g. Authors).
-     * @throws \InvalidArgumentException If the parameter is not a string.
      */
-    public function getSingularForm($root)
+    public function getSingularForm(string $root): string
     {
         $singularForm = $root;
-
-        if (!is_string($root)) {
-            throw new \InvalidArgumentException("The pluralizer expects a string.");
-        }
 
         if (!in_array(strtolower($root), $this->uncountable)) {
             if (null !== $replacement = $this->checkIrregularForm($root, array_flip($this->irregular))) {
@@ -214,7 +207,7 @@ class EnglishPluralizer implements PluralizerInterface
      *
      * @return bool
      */
-    public function isPlural($root)
+    public function isPlural(string $root): bool
     {
         $out = false;
 
@@ -244,7 +237,7 @@ class EnglishPluralizer implements PluralizerInterface
      *
      * @return bool
      */
-    public function isSingular($root)
+    public function isSingular(string $root): bool
     {
         $out = false;
 
@@ -275,7 +268,7 @@ class EnglishPluralizer implements PluralizerInterface
      *
      * @return null|string
      */
-    private function checkIrregularForm($root, $irregular)
+    private function checkIrregularForm(string $root, array $irregular): ?string
     {
         foreach ($irregular as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
@@ -299,7 +292,7 @@ class EnglishPluralizer implements PluralizerInterface
      *
      * @return null|string
      */
-    private function checkIrregularSuffix($root, $irregular)
+    private function checkIrregularSuffix(string $root, array $irregular): ?string
     {
         foreach ($irregular as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
@@ -316,7 +309,7 @@ class EnglishPluralizer implements PluralizerInterface
      *
      * @return bool
      */
-    private function isAmbiguousPlural($root)
+    private function isAmbiguousPlural(string $root): bool
     {
         foreach ($this->ambiguous as $pattern) {
             if (preg_match('/' . $pattern . '$/i', $root)) {
@@ -333,7 +326,7 @@ class EnglishPluralizer implements PluralizerInterface
      *
      * @return bool
      */
-    private function isIrregular($irregular, $root)
+    private function isIrregular(array $irregular, string $root): bool
     {
         foreach ($irregular as $pattern) {
             if (preg_match('/' . $pattern . '$/i', $root)) {

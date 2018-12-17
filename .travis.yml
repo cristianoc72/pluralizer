@@ -5,11 +5,10 @@ env:
     - CC_TEST_REPORTER_ID=ebd3d4f20e92c8e07a468bd39bfbe0ecf8e1a2e5fd178a5e880c77e16f14c3ed
 
 php:
-  - 5.6
-  - 7.0
   - 7.1
   - 7.2
-  - hhvm
+  - 7.3
+  - nightly
 
 install:
   - composer install
@@ -20,14 +19,14 @@ before_script:
   - ./cc-test-reporter before-build
 
 script:
-  - vendor/bin/phpunit --coverage-clover=clover.xml
+  - vendor/bin/phpunit --coverage-clover clover.xml
 
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT
 
 matrix:
   allow_failures:
-    - php: hhvm
+    - php: nightly
 
 fast_finish: true
 
