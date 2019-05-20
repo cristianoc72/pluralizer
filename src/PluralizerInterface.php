@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Pluralizer package.
@@ -7,8 +7,6 @@
  *
  * @license MIT License
  */
-
-declare(strict_types=1);
 
 namespace cristianoc72\Pluralizer;
 

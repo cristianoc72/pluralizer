@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Pluralizer package.
@@ -7,8 +7,6 @@
  *
  * @license MIT License
  */
-
-declare(strict_types=1);
 
 namespace cristianoc72\Pluralizer;
 
@@ -78,6 +76,7 @@ class EnglishPluralizer implements PluralizerInterface
         'life' => 'lives'
     ];
 
+    /** @var array */
     protected $irregular = [
         'matrix' => 'matrices',
         'leaf'   => 'leaves',
@@ -100,6 +99,7 @@ class EnglishPluralizer implements PluralizerInterface
         'alias'  => 'aliases',
     ];
 
+    /** @var array */
     protected $uncountable = [
         'sheep',
         'fish',
@@ -159,7 +159,7 @@ class EnglishPluralizer implements PluralizerInterface
     {
         $pluralForm = $root;
 
-        if (!in_array(strtolower($root), $this->uncountable)) {
+        if (!$this->isUncountable($root)) {
             // This check must be run before `checkIrregularForm` call
             if (!$this->isAmbiguousPlural($root)) {
                 if (null !== $replacement = $this->checkIrregularForm($root, $this->irregular)) {
@@ -186,7 +186,7 @@ class EnglishPluralizer implements PluralizerInterface
     {
         $singularForm = $root;
 
-        if (!in_array(strtolower($root), $this->uncountable)) {
+        if (!$this->isUncountable($root)) {
             if (null !== $replacement = $this->checkIrregularForm($root, array_flip($this->irregular))) {
                 $singularForm = $replacement;
             } elseif (null !== $replacement = $this->checkIrregularSuffix($root, $this->singular)) {
@@ -212,7 +212,7 @@ class EnglishPluralizer implements PluralizerInterface
         $out = false;
 
         if ('' !== $root) {
-            if (in_array(strtolower($root), $this->uncountable)) {
+            if ($this->isUncountable($root)) {
                 $out = true;
             } else {
                 $out = $this->isIrregular($this->irregular, $root);
@@ -243,7 +243,7 @@ class EnglishPluralizer implements PluralizerInterface
 
         if ('' === $root) {
             $out = true;
-        } elseif (in_array(strtolower($root), $this->uncountable)) {
+        } elseif ($this->isUncountable($root)) {
             $out = true;
         } elseif (!$this->isAmbiguousPlural($root)) {
             $out = $this->isIrregular($this->irregular, $root);
@@ -335,5 +335,15 @@ class EnglishPluralizer implements PluralizerInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param string $root
+     *
+     * @return bool
+     */
+    private function isUncountable(string $root): bool
+    {
+        return in_array(strtolower($root), $this->uncountable);
     }
 }

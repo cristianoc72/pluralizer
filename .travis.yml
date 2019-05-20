@@ -5,7 +5,6 @@ env:
     - CC_TEST_REPORTER_ID=ebd3d4f20e92c8e07a468bd39bfbe0ecf8e1a2e5fd178a5e880c77e16f14c3ed
 
 php:
-  - 7.1
   - 7.2
   - 7.3
   - nightly

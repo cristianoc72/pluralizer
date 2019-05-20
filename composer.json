@@ -5,7 +5,8 @@
     "keywords" : [
         "Pluralizer",
         "Singular",
-        "Plural"
+        "Plural",
+        "Inflector"
     ],
     "license" : "MIT",
     "authors" : [{
@@ -14,10 +15,11 @@
         }
     ],
     "require" : {
-        "php" : ">=7.1"
+        "php" : ">=7.2"
     },
     "require-dev": {
-        "phpunit/phpunit": ">=7.0"
+        "phpunit/phpunit": ">=7.0",
+        "vimeo/psalm": "^3.2"
     },
     "autoload" : {
         "psr-4" : {
